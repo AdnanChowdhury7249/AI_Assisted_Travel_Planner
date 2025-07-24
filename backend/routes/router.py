@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.queries.queries import createTripQuery, updateTripQuery
+from backend.queries.queries import createTripQuery, updateTripQuery, getTripQuery
 from backend.schema.trip_schemas import TripCreate, TripUpdate
 
 
@@ -27,3 +27,9 @@ async def updateTrip(trip_id: int, trip: TripUpdate):
         duration=trip.duration,
     )
     return {"message": "Trip updated successfully"}
+
+
+@router.get("/api/get_trips")
+async def getTrips():
+    all_trips = await getTripQuery()
+    return all_trips

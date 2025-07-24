@@ -2,7 +2,8 @@ from ..db.database import database
 
 
 async def createTripQuery(location, num_people, budget, duration):
-    query = """InSERT into trips (location, num_people, budget, duration) 
+    query = """
+    InSERT into trips (location, num_people, budget, duration) 
     VALUES (:location, :num_people, :budget, :duration)
     """
     values = {
@@ -30,3 +31,11 @@ async def updateTripQuery(id, location, num_people, budget, duration):
         "duration": duration,
     }
     await database.execute(query=query, values=values)
+
+
+async def getTripQuery():
+    query = """
+  SELECT * From Trips
+  """
+    result = await database.fetch_all(query=query)
+    return result
