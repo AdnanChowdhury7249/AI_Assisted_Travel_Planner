@@ -1,6 +1,11 @@
-from fastapi import APIRouter
-from backend.queries.queries import createTripQuery, updateTripQuery, getTripQuery
-from backend.schema.trip_schemas import TripCreate, TripUpdate
+from fastapi import APIRouter, HTTPException
+from backend.queries.queries import (
+    createTripQuery,
+    updateTripQuery,
+    getTripQuery,
+    generateItinerary,
+)
+from backend.schema.trip_schemas import TripCreate, TripUpdate, ItineraryRequest
 
 
 router = APIRouter()
@@ -33,3 +38,11 @@ async def updateTrip(trip_id: int, trip: TripUpdate):
 async def getTrips():
     all_trips = await getTripQuery()
     return all_trips
+
+
+@router.post("/api/create_itinerary", tags=["itineraries"])
+async def createItinerary(request: ItineraryRequest):
+    content = await generateItinerary(request.trip_id)
+    if not content:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    return {"message": "Itinerary generated successfully", "itinerary": content}

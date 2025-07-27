@@ -1,9 +1,15 @@
 from ..db.database import database
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 async def createTripQuery(location, num_people, budget, duration):
     query = """
-    InSERT into trips (location, num_people, budget, duration) 
+    INSERT into trips (location, num_people, budget, duration) 
     VALUES (:location, :num_people, :budget, :duration)
     """
     values = {
@@ -22,6 +28,7 @@ async def updateTripQuery(id, location, num_people, budget, duration):
     num_people = :num_people, 
     budget = :budget, 
     duration = :duration
+    WHERE id = :id
   """
     values = {
         "id": id,
@@ -39,3 +46,35 @@ async def getTripQuery():
   """
     result = await database.fetch_all(query=query)
     return result
+
+
+async def generateItinerary(trip_id: int):
+    query = "SELECT * FROM trips WHERE id = :trip_id"
+    trip = await database.fetch_one(query=query, values={"trip_id": trip_id})
+    if not trip:
+        return None
+
+    prompt = (
+        f"Create a {trip['duration']}-day travel itinerary for {trip['num_people']} people "
+        f"going to {trip['location']} with a budget of {trip['budget']}."
+    )
+
+    # 🔁 Use the client you just defined
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=800,
+        temperature=0.7,
+    )
+
+    content = response.choices[0].message.content
+
+    insert_query = """
+    INSERT INTO itineraries (trip_id, content, status)
+    VALUES (:trip_id, :content, :status)
+    """
+    await database.execute(
+        query=insert_query,
+        values={"trip_id": trip_id, "content": content, "status": "generated"},
+    )
+    return content

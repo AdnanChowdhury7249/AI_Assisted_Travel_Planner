@@ -14,3 +14,7 @@ class TripUpdate(BaseModel):
     num_people: Optional[int]
     budget: Optional[float]
     duration: Optional[int]
+
+
+class ItineraryRequest(BaseModel):
+    trip_id: int
