@@ -4,6 +4,7 @@ from backend.queries.queries import (
     updateTripQuery,
     getTripQuery,
     generateItinerary,
+    getItineraryQuery,
 )
 from backend.schema.trip_schemas import TripCreate, TripUpdate, ItineraryRequest
 
@@ -22,7 +23,7 @@ async def create_trip(trip: TripCreate):
     return {"message": "Trip created successfully"}
 
 
-@router.put("/api/update_trip")
+@router.put("/api/update_trip", tags=["Trips"])
 async def updateTrip(trip_id: int, trip: TripUpdate):
     await updateTripQuery(
         id=trip_id,
@@ -34,15 +35,24 @@ async def updateTrip(trip_id: int, trip: TripUpdate):
     return {"message": "Trip updated successfully"}
 
 
-@router.get("/api/get_trips")
+@router.get("/api/get_trips", tags=["Trips"])
 async def getTrips():
     all_trips = await getTripQuery()
     return all_trips
 
 
-@router.post("/api/create_itinerary", tags=["itineraries"])
+@router.post("/api/create_itinerary", tags=["Itineraries"])
 async def createItinerary(request: ItineraryRequest):
     content = await generateItinerary(request.trip_id)
     if not content:
         raise HTTPException(status_code=404, detail="Trip not found")
     return {"message": "Itinerary generated successfully", "itinerary": content}
+
+
+@router.get("/api/get_itinerary/{trip_id}", tags=["Itineraries"])
+async def get_itinerary(trip_id: int):
+    itinerary = await getItineraryQuery(trip_id)
+
+    if not itinerary:
+        raise HTTPException(status_code=404, detail="itinerary not found")
+    return {"itinerary": itinerary["content"]}

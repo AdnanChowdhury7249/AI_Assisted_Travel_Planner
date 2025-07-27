@@ -59,7 +59,6 @@ async def generateItinerary(trip_id: int):
         f"going to {trip['location']} with a budget of {trip['budget']}."
     )
 
-    # 🔁 Use the client you just defined
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
@@ -78,3 +77,9 @@ async def generateItinerary(trip_id: int):
         values={"trip_id": trip_id, "content": content, "status": "generated"},
     )
     return content
+
+
+async def getItineraryQuery(trip_id: int):
+    query = "SELECT * FROM itineraries WHERE trip_id = :trip_id"
+    result = await database.fetch_one(query=query, values={"trip_id": trip_id})
+    return result
