@@ -6,4 +6,11 @@ const API = axios.create({
 
 
 export const createTrip = (tripData) => API.post("api/create_trip", tripData)
+export const createItinerary = (trip_id) => API.post("api/create_itinerary", { trip_id })
+
+
+
+
+
+
 

@@ -2,6 +2,7 @@ from ..db.database import database
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+from fastapi import HTTPException
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -9,8 +10,9 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 async def createTripQuery(location, num_people, budget, duration):
     query = """
-    INSERT into trips (location, num_people, budget, duration) 
+    INSERT INTO trips (location, num_people, budget, duration) 
     VALUES (:location, :num_people, :budget, :duration)
+    RETURNING id;
     """
     values = {
         "location": location,
@@ -18,7 +20,12 @@ async def createTripQuery(location, num_people, budget, duration):
         "budget": budget,
         "duration": duration,
     }
-    await database.execute(query=query, values=values)
+    trip_id_row = await database.fetch_one(query=query, values=values)
+
+    if trip_id_row is None:
+        raise HTTPException(status_code=500, detail="Failed to create trip")
+
+    return trip_id_row["id"]
 
 
 async def updateTripQuery(id, location, num_people, budget, duration):

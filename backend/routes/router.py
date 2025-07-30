@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from backend.queries.queries import (
     createTripQuery,
     updateTripQuery,
@@ -14,13 +14,13 @@ router = APIRouter()
 
 @router.post("/api/create_trip", tags=["Trips"])
 async def create_trip(trip: TripCreate):
-    await createTripQuery(
+    trip_id = await createTripQuery(
         location=trip.location,
         num_people=trip.num_people,
         budget=trip.budget,
         duration=trip.duration,
     )
-    return {"message": "Trip created successfully"}
+    return {"message": "Trip created successfully", "trip_id": trip_id}
 
 
 @router.put("/api/update_trip", tags=["Trips"])
@@ -42,8 +42,9 @@ async def getTrips():
 
 
 @router.post("/api/create_itinerary", tags=["Itineraries"])
-async def createItinerary(request: ItineraryRequest):
-    content = await generateItinerary(request.trip_id)
+async def createItinerary(itinerary_req: ItineraryRequest):
+    print("Received trip_id:", itinerary_req.trip_id)
+    content = await generateItinerary(itinerary_req.trip_id)
     if not content:
         raise HTTPException(status_code=404, detail="Trip not found")
     return {"message": "Itinerary generated successfully", "itinerary": content}

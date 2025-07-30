@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { createTrip } from "../api/api";
+import { createTrip, createItinerary } from "../api/api";
+import ReactMarkdown from 'react-markdown';
 
 function CreateTripForm() {
 
@@ -9,6 +10,8 @@ function CreateTripForm() {
     budget: 0,
     duration: 1
   })
+  const [itinerary, setItinerary] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,9 +31,18 @@ function CreateTripForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setItinerary("");
     try {
-      await createTrip(formData)
+      const response = await createTrip(formData)
+      const tripId = response.data.trip_id;
+
       alert("trip created")
+      console.log("Sending trip_id to itinerary API:", tripId);
+
+      const itineraryResponse = await createItinerary(tripId);
+
+      setItinerary(itineraryResponse.data.content);
 
     } catch (error) {
       console.error(error)
