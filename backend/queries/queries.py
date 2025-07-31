@@ -68,8 +68,18 @@ async def generateItinerary(trip_id: int):
         return None
 
     prompt = (
-        f"Create a {trip['duration']}-day travel itinerary for {trip['num_people']} people "
-        f"going to {trip['location']} with a budget of {trip['budget']}."
+        f"You are a helpful travel planner. Based on the following details, generate a detailed and customer-friendly "
+        f"{trip['duration']}-day holiday itinerary in Markdown format:\n\n"
+        f"- Destination: {trip['location']}\n"
+        f"- Number of people: {trip['num_people']}\n"
+        f"- Total budget: £{trip['budget']} GBP\n\n"
+        f"Please structure the response with:\n"
+        f"1. A friendly introduction\n"
+        f"2. A daily breakdown titled **Day 1**, **Day 2**, etc.\n"
+        f"3. Suggestions for accommodation, meals, transport, and attractions\n"
+        f"4. Emphasise budget-friendliness and unique experiences\n"
+        f"5. End with a summary budget breakdown in GBP\n\n"
+        f"Keep it well-formatted in Markdown so it's easy to render for customers."
     )
 
     response = client.chat.completions.create(

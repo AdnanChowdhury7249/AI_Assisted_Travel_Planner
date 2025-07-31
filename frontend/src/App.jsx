@@ -1,13 +1,12 @@
 import './App.css'
-import CreateTripForm from './components/CreateTripForm'
-import DisplayCard from './components/DisplayCard'
+
+import TripPage from './components/TripPage';
 
 function App() {
 
   return (
     <>
-      <CreateTripForm />
-      <DisplayCard />
+      <TripPage />;
     </>
   )
 }

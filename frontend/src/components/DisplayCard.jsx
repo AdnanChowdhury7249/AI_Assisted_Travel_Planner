@@ -1,24 +1,30 @@
-import { useState, useEffect } from "react";
-import { getAllTrips } from "../api/api";
+import { deleteTrip, getAllitineraries } from "../api/api";
+import { useState } from "react";
 
 
-function DisplayCard() {
+function DisplayCard({ trips = [], setTrips }) {
+  const [itineraries, setItineraries] = useState({});
 
-  const [trips, setTrips] = useState([])
-
-  useEffect(() => {
-    async function fetchTrips() {
-      try {
-        const response = await getAllTrips()
-        setTrips(response.data)
-
-      } catch (error) {
-        console.error("error fetching trips", error)
-
-      }
+  const handleDelete = async (id) => {
+    try {
+      await deleteTrip(id);
+      setTrips((prev) => prev.filter((trip) => trip.id !== id));
+    } catch (error) {
+      console.error("error deleting trip", error);
     }
-    fetchTrips();
-  }, [])
+  };
+
+  const displayItinerary = async (tripId) => {
+    try {
+      const res = await getAllitineraries(tripId);
+      setItineraries((prev) => ({
+        ...prev,
+        [tripId]: res.data.itinerary,
+      }));
+    } catch (error) {
+      console.error("failed to retrieve itinerary", error);
+    }
+  };
 
   return (
     <div className="p-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -28,11 +34,27 @@ function DisplayCard() {
           <p>People: {trip.num_people}</p>
           <p>Budget: £{trip.budget}</p>
           <p>Duration: {trip.duration} days</p>
+          <button
+            onClick={() => handleDelete(trip.id)}
+            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Delete
+          </button>
+          <button onClick={() => displayItinerary(trip.id)}
+            className="mt-2 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            View Itinerary
+          </button>
+          {itineraries[trip.id] && (
+            <div className="mt-4 bg-gray-100 p-2 rounded">
+              <h3 className="font-bold">Itinerary:</h3>
+              <p className="whitespace-pre-line">{itineraries[trip.id]}</p>
+            </div>
+          )}
         </div>
       ))}
     </div>
-
-  )
+  );
 }
 
-export default DisplayCard
+export default DisplayCard;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createTrip, createItinerary } from "../api/api";
 import ReactMarkdown from 'react-markdown';
 
-function CreateTripForm() {
+function CreateTripForm({ onTripCreated }) {
 
   const [formData, setFormData] = useState({
     location: "",
@@ -33,23 +33,22 @@ function CreateTripForm() {
     e.preventDefault();
     setLoading(true);
     setItinerary("");
+
     try {
-      const response = await createTrip(formData)
+      const response = await createTrip(formData);
       const tripId = response.data.trip_id;
+      await createItinerary(tripId);
+      alert("Trip created!");
 
-      alert("trip created")
-      console.log("Sending trip_id to itinerary API:", tripId);
-
-      const itineraryResponse = await createItinerary(tripId);
-
-      setItinerary(itineraryResponse.data.content);
+      // ✅ call parent-provided refresh function
+      onTripCreated();
 
     } catch (error) {
-      console.error(error)
-
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }
-
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form onSubmit={handleSubmit} className="space-y-4">
