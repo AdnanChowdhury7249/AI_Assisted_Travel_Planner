@@ -5,6 +5,8 @@ from backend.queries.queries import (
     getTripQuery,
     generateItinerary,
     getItineraryQuery,
+    deleteTripQuery,
+    getTripByIdQuery,
 )
 from backend.schema.trip_schemas import TripCreate, TripUpdate, ItineraryRequest
 
@@ -39,6 +41,16 @@ async def updateTrip(trip_id: int, trip: TripUpdate):
 async def getTrips():
     all_trips = await getTripQuery()
     return all_trips
+
+
+@router.delete("/api/delete_trip/{id}", tags=["Trips"])
+async def deleteTrip(id: int):
+    trip_exists = await getTripByIdQuery(id)
+    if not trip_exists:
+        raise HTTPException(status_code=404, detail="Trip not found")
+
+    await deleteTripQuery(id)
+    return {"message": "Trip deleted successfully"}
 
 
 @router.post("/api/create_itinerary", tags=["Itineraries"])

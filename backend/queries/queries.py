@@ -55,6 +55,12 @@ async def getTripQuery():
     return result
 
 
+async def deleteTripQuery(id):
+    query = "DELETE FROM trips WHERE id = :id"
+    result = await database.execute(query=query, values={"id": id})
+    return result
+
+
 async def generateItinerary(trip_id: int):
     query = "SELECT * FROM trips WHERE id = :trip_id"
     trip = await database.fetch_one(query=query, values={"trip_id": trip_id})
@@ -89,4 +95,11 @@ async def generateItinerary(trip_id: int):
 async def getItineraryQuery(trip_id: int):
     query = "SELECT * FROM itineraries WHERE trip_id = :trip_id"
     result = await database.fetch_one(query=query, values={"trip_id": trip_id})
+    return result
+
+
+async def getTripByIdQuery(id: int):
+    query = "SELECT * FROM trips WHERE id = :id"
+    values = {"id": id}
+    result = await database.fetch_one(query=query, values=values)
     return result
