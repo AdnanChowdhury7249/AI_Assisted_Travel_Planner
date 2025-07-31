@@ -49,6 +49,7 @@ function CreateTripForm({ onTripCreated }) {
       setLoading(false);
     }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form onSubmit={handleSubmit} className="space-y-4">

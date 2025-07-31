@@ -4,6 +4,7 @@ import { useState } from "react";
 
 function DisplayCard({ trips = [], setTrips }) {
   const [itineraries, setItineraries] = useState({});
+  const [expandedItineraries, setExpandedItineraries] = useState({});
 
   const handleDelete = async (id) => {
     try {
@@ -13,17 +14,27 @@ function DisplayCard({ trips = [], setTrips }) {
       console.error("error deleting trip", error);
     }
   };
-
   const displayItinerary = async (tripId) => {
-    try {
-      const res = await getAllitineraries(tripId);
-      setItineraries((prev) => ({
-        ...prev,
-        [tripId]: res.data.itinerary,
-      }));
-    } catch (error) {
-      console.error("failed to retrieve itinerary", error);
+    const isExpanded = expandedItineraries[tripId];
+
+    if (isExpanded) {
+
+      setExpandedItineraries((prev) => ({ ...prev, [tripId]: false }));
+      return;
     }
+    if (!itineraries[tripId]) {
+      try {
+        const res = await getAllitineraries(tripId);
+        setItineraries((prev) => ({
+          ...prev,
+          [tripId]: res.data.itinerary,
+        }));
+      } catch (error) {
+        console.error("failed to retrieve itinerary", error);
+        return;
+      }
+    }
+    setExpandedItineraries((prev) => ({ ...prev, [tripId]: true }));
   };
 
   return (
@@ -43,9 +54,8 @@ function DisplayCard({ trips = [], setTrips }) {
           <button onClick={() => displayItinerary(trip.id)}
             className="mt-2 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
-            View Itinerary
-          </button>
-          {itineraries[trip.id] && (
+            {expandedItineraries[trip.id] ? "Hide Itinerary" : "View Itinerary"}          </button>
+          {expandedItineraries[trip.id] && itineraries[trip.id] && (
             <div className="mt-4 bg-gray-100 p-2 rounded">
               <h3 className="font-bold">Itinerary:</h3>
               <p className="whitespace-pre-line">{itineraries[trip.id]}</p>
