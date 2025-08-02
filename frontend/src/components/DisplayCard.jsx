@@ -56,8 +56,8 @@ function DisplayCard({ trips = [], setTrips }) {
           >
             {expandedItineraries[trip.id] ? "Hide Itinerary" : "View Itinerary"}          </button>
           {expandedItineraries[trip.id] && itineraries[trip.id] && (
-            <div className="mt-4 bg-gray-100 p-2 rounded">
-              <h3 className="font-bold">Itinerary:</h3>
+            <div className="mt-4 bg-gray-100 p-2 rounded max-h-64 overflow-y-auto">
+              <h3 className="font-bold mb-2">Itinerary:</h3>
               <p className="whitespace-pre-line">{itineraries[trip.id]}</p>
             </div>
           )}
