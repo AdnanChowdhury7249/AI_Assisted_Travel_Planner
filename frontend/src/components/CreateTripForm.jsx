@@ -40,7 +40,6 @@ function CreateTripForm({ onTripCreated }) {
       await createItinerary(tripId);
       alert("Trip created!");
 
-      // ✅ call parent-provided refresh function
       onTripCreated();
 
     } catch (error) {
@@ -51,60 +50,68 @@ function CreateTripForm({ onTripCreated }) {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="flex justify-center items-center min-h-screen px-4">
+
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 border-white p-6 rounded-lg w-full max-w-lg shadow-md bg-white"
+      >
+        <h1 className="flex justify-center items-center font-bold text-2x1">Plan Your Next Adventure</h1>
+        <h2 className="flex justify-center items-center text-sm text-gray-500">Tell us about your dream trip and we'll help you plan it</h2>
         <div className="flex flex-col">
-          <label htmlFor="location">Location:</label>
+          <label htmlFor="location" className="font-semibold text-sm py-1">Destination</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border px-1 py-1 text-sm rounded"
           />
         </div>
-        <div className="flex gap-4">
-          <div className="flex flex-col flex-1">
-            <label htmlFor="num_people">Number of people:</label>
+        <div className="flex flex-col gap-2 md:flex-row md:justify-between">
+          <div className="flex flex-col w-full md:w-[30%]">
+            <label htmlFor="num_people" className="font-semibold text-sm py-1">Number of people:</label>
             <input
               type="number"
               name="num_people"
               value={formData.num_people}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border px-1 py-1 text-sm rounded"
             />
           </div>
 
-          <div className="flex flex-col flex-1">
-            <label htmlFor="budget">Budget (£):</label>
+          <div className="flex flex-col w-full md:w-[30%]">
+            <label htmlFor="budget" className="font-semibold text-sm py-1">Budget (£):</label>
             <input
               type="number"
               name="budget"
               value={formData.budget}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border px-1 py-1 text-sm rounded"
             />
           </div>
 
-          <div className="flex flex-col flex-1">
-            <label htmlFor="duration">Duration (days):</label>
+          <div className="flex flex-col w-full md:w-[30%]">
+            <label htmlFor="duration" className="font-semibold text-sm py-1">Duration (days):</label>
             <input
               type="number"
               name="duration"
               value={formData.duration}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border px-1 py-1 text-sm rounded"
             />
           </div>
         </div>
 
-        <button type="submit" className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
           Create Trip
         </button>
       </form>
     </div>
   )
-
 }
 
 

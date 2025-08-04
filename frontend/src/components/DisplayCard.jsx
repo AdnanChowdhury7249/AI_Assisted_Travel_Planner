@@ -38,13 +38,13 @@ function DisplayCard({ trips = [], setTrips }) {
   };
 
   return (
-    <div className="p-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="p-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {trips.map((trip) => (
-        <div key={trip.id} className="border rounded-lg shadow p-4">
-          <h2 className="text-xl font-semibold">{trip.location}</h2>
-          <p>People: {trip.num_people}</p>
-          <p>Budget: £{trip.budget}</p>
-          <p>Duration: {trip.duration} days</p>
+        <div key={trip.id} className="border rounded-lg shadow p-4 ">
+          <h2 className="text-lg font-bold">{trip.location.charAt(0).toUpperCase() + String(trip.location).slice(1)}</h2>
+          <p>{trip.num_people} Travellers</p>
+          <p> £ {trip.budget}</p>
+          <p>{trip.duration} days</p>
           <button
             onClick={() => handleDelete(trip.id)}
             className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
