@@ -38,11 +38,12 @@ function DisplayCard({ trips = [], setTrips }) {
   };
 
   return (
-    <div className="p-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="p-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4 ">
       {trips.map((trip) => (
-        <div key={trip.id} className="border rounded-lg shadow p-4 ">
+        <div key={trip.id} className="border-white rounded-lg shadow p-4 bg-white">
           <h2 className="text-lg font-bold">{trip.location.charAt(0).toUpperCase() + String(trip.location).slice(1)}</h2>
           <p>{trip.num_people} Travellers</p>
+          <p className="text-xs text-gray-600">Created at {new Date(trip.created_at).toLocaleDateString()}</p>
           <p> £ {trip.budget}</p>
           <p>{trip.duration} days</p>
           <button
