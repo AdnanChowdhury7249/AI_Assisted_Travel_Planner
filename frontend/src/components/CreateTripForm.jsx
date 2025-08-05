@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTrip, createItinerary } from "../api/api";
-import ReactMarkdown from 'react-markdown';
+import { BeatLoader } from "react-spinners";
+
 
 function CreateTripForm({ onTripCreated }) {
 
@@ -12,6 +13,7 @@ function CreateTripForm({ onTripCreated }) {
   })
   const [itinerary, setItinerary] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,16 +40,22 @@ function CreateTripForm({ onTripCreated }) {
       const response = await createTrip(formData);
       const tripId = response.data.trip_id;
       await createItinerary(tripId);
-      alert("Trip created!");
 
+      setSuccess(true);
       onTripCreated();
-
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [success])
 
   return (
     <div className="flex justify-center pt-8 px-4 py-20">
@@ -59,7 +67,7 @@ function CreateTripForm({ onTripCreated }) {
         <h2 className="text-center text-sm text-gray-500">Tell us about your dream trip and we'll help you plan it</h2>
 
         <div className="flex flex-col">
-          <label htmlFor="location" className="font-semibold text-sm py-1">Destination</label>
+          <label htmlFor="location" className="font-semibold text-xs py-1" style={{ color: "#2C303A" }}>Destination</label>
           <input
             type="text"
             name="location"
@@ -71,7 +79,7 @@ function CreateTripForm({ onTripCreated }) {
 
         <div className="flex flex-col gap-2 md:flex-row md:justify-between">
           <div className="flex flex-col w-full md:w-[30%]">
-            <label htmlFor="num_people" className="font-semibold text-sm py-1">Number of people:</label>
+            <label htmlFor="num_people" className="font-semibold text-xs py-1" style={{ color: "#2C303A" }}>Travellers:</label>
             <input
               type="number"
               name="num_people"
@@ -82,7 +90,7 @@ function CreateTripForm({ onTripCreated }) {
           </div>
 
           <div className="flex flex-col w-full md:w-[30%]">
-            <label htmlFor="budget" className="font-semibold text-sm py-1">Budget (£):</label>
+            <label htmlFor="budget" className="font-semibold text-xs py-1" style={{ color: "#2C303A" }}>Budget (£):</label>
             <input
               type="number"
               name="budget"
@@ -93,7 +101,7 @@ function CreateTripForm({ onTripCreated }) {
           </div>
 
           <div className="flex flex-col w-full md:w-[30%]">
-            <label htmlFor="duration" className="font-semibold text-sm py-1">Duration (days):</label>
+            <label htmlFor="duration" className="font-semibold text-xs py-1" style={{ color: "#2C303A" }}>Duration (days):</label>
             <input
               type="number"
               name="duration"
@@ -103,13 +111,22 @@ function CreateTripForm({ onTripCreated }) {
             />
           </div>
         </div>
-
         <button
           type="submit"
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer"
         >
           Create Trip
         </button>
+        {loading && (
+          <div className="flex justify-center mt-4">
+            <BeatLoader color="#3B82F6" size={10} />
+          </div>
+        )}
+        {success && !loading && (
+          <div className="text-green-600 text-sm text-center mt-2">
+            Trip created successfully!
+          </div>
+        )}
       </form>
     </div>
   );
