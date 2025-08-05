@@ -1,6 +1,7 @@
 import { deleteTrip, getAllitineraries } from "../api/api";
 import { useState } from "react";
-
+import ReactMarkdown from 'react-markdown';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
 function DisplayCard({ trips = [], setTrips }) {
   const [itineraries, setItineraries] = useState({});
@@ -49,20 +50,37 @@ function DisplayCard({ trips = [], setTrips }) {
             <p className=" py-1">{trip.duration} {trip.duration === 1 ? 'day' : 'days'}</p>
           </div>
 
-          <button
-            onClick={() => handleDelete(trip.id)}
-            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            Delete
-          </button>
-          <button onClick={() => displayItinerary(trip.id)}
-            className="mt-2 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            {expandedItineraries[trip.id] ? "Hide Itinerary" : "View Itinerary"}</button>
+          <div className="flex justify-between items-center mt-2">
+            <button
+              onClick={() => handleDelete(trip.id)}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+            >
+              Delete
+            </button>
+
+            <button
+              onClick={() => displayItinerary(trip.id)}
+              className="flex items-center px-4 py-2 text-blue-500 rounded font-medium hover:bg-blue-100 cursor-pointer text-xs"
+            >
+              {expandedItineraries[trip.id] ? (
+                <>
+                  <ChevronUpIcon className="h-5 w-5 mr-1" />
+                  Collapse
+                </>
+              ) : (
+                <>
+                  <ChevronDownIcon className="h-5 w-5 mr-1" />
+                  Expand
+                </>
+              )}
+            </button>
+          </div>
           {expandedItineraries[trip.id] && itineraries[trip.id] && (
             <div className="mt-4 bg-gray-100 p-2 rounded max-h-64 overflow-y-auto">
               <h3 className="font-bold mb-2">Itinerary:</h3>
-              <p className="whitespace-pre-line">{itineraries[trip.id]}</p>
+              <div className="text-sm">
+                <ReactMarkdown>{itineraries[trip.id]}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
